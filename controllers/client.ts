@@ -1,5 +1,5 @@
 import { NextFunction, Response, Request, response } from "express";
-import { Client } from "../dto";
+import { Client, ClientLoginInput } from "../dto";
 import { client } from "../models/client";
 import bcrypt from "bcrypt";
 
@@ -24,4 +24,20 @@ export const ClientRegister = async (
   });
 
   return response.json({ message: createUser });
+};
+
+export const ClientLogin = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {
+  const { email, password } = <ClientLoginInput>request.body;
+
+  //validation
+
+  const user = client.findOne({ email: email });
+
+  if (user !== null) {
+    return { message: "User exists" };
+  }
 };
