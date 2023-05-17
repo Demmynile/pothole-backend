@@ -12,3 +12,9 @@ export interface ClientLoginInput {
   email: string;
   password: string;
 }
+
+export interface clientPayload {
+  _id: string;
+  first_name: string;
+  email: string;
+}

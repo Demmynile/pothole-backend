@@ -32,12 +32,4 @@ export const ClientLogin = async (
   next: NextFunction
 ) => {
   const { email, password } = <ClientLoginInput>request.body;
-
-  //validation
-
-  const user = client.findOne({ email: email });
-
-  if (user !== null) {
-    return { message: "User exists" };
-  }
 };
