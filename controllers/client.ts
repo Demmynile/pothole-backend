@@ -24,16 +24,27 @@ export const ClientRegister = async (
   // hash password
   const userPassword = await GeneratePassword(password, salt);
 
-  const createUser = await client.create({
-    first_name,
-    last_name,
-    phone,
-    email,
-    password: userPassword,
-    salt: salt,
-  });
+  // email verification
+  const user = await findClient("", email);
 
-  return response.json({ message: createUser });
+  if (!user) {
+    const createUser = await client.create({
+      first_name,
+      last_name,
+      phone,
+      email,
+      password: userPassword,
+      salt: salt,
+    });
+
+    if (createUser) {
+      return response.status(200).json({ message: createUser });
+    } else {
+      return response.status(400).json({ error: "User not created" });
+    }
+  }
+
+  return response.status(400).json({ error: "email already exists" });
 };
 
 export const ClientLogin = async (
@@ -48,21 +59,22 @@ export const ClientLogin = async (
 
   if (existingUser !== null) {
     const validatePassword = await ValidatePassword(
-      existingUser.salt,
       password,
-      existingUser.password
+      existingUser.password,
+      existingUser.salt
     );
 
     if (validatePassword) {
       const signature = GenerateSignature({
-        _id: existingUser._id,
+        _id: existingUser.id,
         first_name: existingUser.first_name,
         email: existingUser.email,
       });
 
       return response.json(signature);
+    } else {
+      return response.json({ message: "Password is not valid" });
     }
-
-    return response.json({ message: "Login credential so wrong" });
   }
+  return response.status(400).json({ message: "Login credential so wrong" });
 };

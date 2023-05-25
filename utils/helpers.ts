@@ -21,21 +21,20 @@ export const GenerateSalt = async () => {
 };
 
 export const GeneratePassword = async (salt: string, password: string) => {
-  return await bcrypt.hash(password, salt);
+  return await bcrypt.hash(salt, password);
 };
 
 export const ValidatePassword = async (
-  saltPassword: string,
   enteredPassword: string,
-  savedPassword: string
+  savedPassword: string,
+  salt: string
 ) => {
-  return (
-    (await GeneratePassword(enteredPassword, saltPassword)) == savedPassword
-  );
+  return (await GeneratePassword(enteredPassword, salt)) === savedPassword;
 };
 
-export const GenerateSignature = async (payload: clientPayload) => {
+export const GenerateSignature = (payload: clientPayload) => {
   const signature = jwt.sign(payload, APP_SECRET, { expiresIn: "1d" });
+
   return signature;
 };
 
