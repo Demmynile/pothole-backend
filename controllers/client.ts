@@ -5,6 +5,7 @@ import {
   findClient,
   GeneratePassword,
   GenerateSalt,
+  GenerateSignature,
   ValidatePassword,
 } from "../utils/helpers";
 
@@ -44,4 +45,24 @@ export const ClientLogin = async (
 
   // validate my email
   const existingUser = await findClient("", email);
+
+  if (existingUser !== null) {
+    const validatePassword = await ValidatePassword(
+      existingUser.salt,
+      password,
+      existingUser.password
+    );
+
+    if (validatePassword) {
+      const signature = GenerateSignature({
+        _id: existingUser._id,
+        first_name: existingUser.first_name,
+        email: existingUser.email,
+      });
+
+      return response.json(signature);
+    }
+
+    return response.json({ message: "Login credential so wrong" });
+  }
 };

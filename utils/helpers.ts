@@ -7,10 +7,12 @@ import { APP_SECRET } from "../config";
 import { clientPayload } from "../dto";
 
 export const findClient = async (id?: string | undefined, email?: string) => {
-  if (id !== null) {
-    const user = await client.findById(id);
+  if (email) {
+    const vendor = await client.findOne({ email: email });
+    return vendor;
   } else {
-    const user = await client.findOne({ email: email });
+    const vendor = await client.findById(id);
+    return vendor;
   }
 };
 
