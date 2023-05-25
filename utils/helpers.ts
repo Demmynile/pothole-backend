@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import { APP_SECRET } from "../config";
 import { clientPayload } from "../dto";
 
-export const findClient = async (id: string | undefined, email: string) => {
+export const findClient = async (id?: string | undefined, email?: string) => {
   if (id !== null) {
     const user = await client.findById(id);
   } else {
